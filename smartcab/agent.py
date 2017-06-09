@@ -93,9 +93,7 @@ class LearningAgent(Agent):
         # If it is not, create a new dictionary for that state
         #   Then, for each action available, set the initial Q-value to 0.0
         if state not in self.Q.keys():
-            self.Q[state] = dict()
-            for action in self.valid_actions:
-                self.Q[state][action] = 0.0
+            self.Q[state] = {act: 0.0 for act in self.valid_actions}
         return
 
 
@@ -120,11 +118,8 @@ class LearningAgent(Agent):
             if  random.random() < self.epsilon:
                 action = random.choice(self.valid_actions)
             else:
-                maxList = []
                 maxValue = self.get_maxQ(state)
-                for act in self.Q[state]:
-                    if self.Q[state][act] == maxValue:
-                        maxList.append(act)
+                maxList = [act for act in self.Q[state] if self.Q[state][act] == maxValue]
                 action = random.choice(maxList)
         return action
 
@@ -227,14 +222,13 @@ def run():
     sim.run(n_test=10)
     '''
 
+
     # 优化Q-Learning模拟结果
     env = Environment()
     agent = env.create_agent(LearningAgent,learning=True,alpha=0.5)
     env.set_primary_agent(agent,enforce_deadline=True)
     sim = Simulator(env,update_delay=0.0001,log_metrics=True,optimized=True,display = False)
     sim.run(tolerance=0.005,n_test=10)
-
-
 
 
 if __name__ == '__main__':
